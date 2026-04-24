@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classroom Efficiency Logger</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+    background-color: #e5e7e5;
+    font-family: Verdana, Arial, sans-serif;
+    }
+
+    .nav-bar {
+    width: 90%; margin: 20px auto 0;
+    background: #1a5c1a; border-radius: 12px;
+    padding: 12px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav-bar a {
+    color: #fff; text-decoration: none; font-size: 13px;
+    transition: color .2s;
+    }
+    .nav-bar a:hover { color: #f5c400; }
+    .nav-sep { color: #ffffff88; margin: 0 10px; }
+
+    .logo-strip {
+    width: 90%; margin: 10px auto 0;
+    background: #1a5c1a; border-radius: 12px;
+    padding: 18px 24px;
+    display: flex; align-items: center; gap: 16px;
+    }
+    .logo-badge {
+    width: 52px; height: 52px; background: #f5c400;
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: bold; color: #1a5c1a; flex-shrink: 0;
+    }
+    .logo-text-main { color: #fff; font-size: 20px; font-weight: bold; }
+    .logo-text-sub  { color: #f5c400; font-size: 11px; letter-spacing: 1px; margin-top: 3px; }
+
+    .hero {
+    width: 90%; margin: 14px auto 0;
+    background: #1a5c1a; border-radius: 12px;
+    padding: 30px 20px; text-align: center;
+    }
+    .hero h1 { color: #fff; font-size: 28px; margin-bottom: 10px; }
+    .hero p  { color: #f5c400; font-size: 13px; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .form-card {
+    width: 55%; margin: 18px auto 0;
+    background: #fff; border-radius: 12px; padding: 28px 32px;
+    }
+    .form-card p { margin-bottom: 18px; }
+    .field-label { color: #1a5c1a; font-weight: bold; font-size: 14px; }
+    .field-hint  { color: #5a7a5a; font-size: 11px; display: block; margin-top: 4px; }
+    .form-input, .form-textarea {
+    margin-top: 10px; padding: 8px 12px; width: 100%; max-width: 420px;
+    border-radius: 8px; border: 2px solid #cfe3cf; background: #f7fff7;
+    font-family: Verdana, Arial; font-size: 13px; outline: none;
+    transition: border-color .2s;
+    }
+    .form-input:focus, .form-textarea:focus { border-color: #1a5c1a; }
+    .form-textarea { resize: vertical; min-height: 90px; }
+    .rating-row { display: flex; gap: 14px; margin-top: 10px; align-items: center; }
+    .rating-row label { color: #1a5c1a; cursor: pointer; font-size: 14px; }
+    .divider { border: none; border-top: 1px solid #d0e4d0; margin: 4px 0 18px; }
+    .submit-btn {
+    display: block; margin: 0 auto;
+    background: #1a5c1a; color: #fff;
+    padding: 12px 50px; font-weight: bold; font-size: 13px;
+    border: none; border-radius: 10px; cursor: pointer;
+    transition: background .2s, transform .1s;
+    }
+    .submit-btn:hover { background: #145014; transform: translateY(-1px); }
+    .disclaimer { text-align: center; color: #5a7a5a; font-size: 11px; margin-top: 14px; }
+
+    .info-card {
+    width: 65%; margin: 18px auto 0;
+    background: #fff; border-radius: 12px; padding: 32px 36px;
+    }
+    .info-card h2 {
+    color: #1a5c1a; font-size: 20px; margin-bottom: 6px;
+    border-bottom: 2px solid #d0e4d0; padding-bottom: 10px;
+    }
+    .info-card h3 { color: #1a5c1a; font-size: 14px; margin: 20px 0 6px; }
+    .info-card p  { color: #444; font-size: 13px; line-height: 1.7; margin-bottom: 10px; }
+    .info-card ul { color: #444; font-size: 13px; line-height: 1.9; padding-left: 20px; margin-bottom: 10px; }
+    .info-card a  { color: #1a5c1a; }
+    .contact-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;
+    }
+    .contact-box {
+    background: #f7fff7; border: 1.5px solid #cfe3cf;
+    border-radius: 8px; padding: 16px;
+    }
+    .contact-box .label { color: #1a5c1a; font-weight: bold; font-size: 12px; margin-bottom: 4px; }
+    .contact-box .value { color: #444; font-size: 12px; }
+    .back-btn {
+    display: inline-block; margin-top: 22px;
+    background: #1a5c1a; color: #fff;
+    padding: 9px 28px; font-size: 12px; font-weight: bold;
+    border: none; border-radius: 8px; cursor: pointer;
+    text-decoration: none; transition: background .2s;
+    }
+    .back-btn:hover { background: #145014; }
+
+    footer {
+    text-align: center; color: #5a7a5a; font-size: 11px;
+    margin: 30px 0 20px;
+    }
+
+    #toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #1a5c1a; color: #fff; padding: 12px 28px;
+    border-radius: 8px; font-size: 13px; font-weight: bold;
+    transition: transform .4s ease; z-index: 999; pointer-events: none;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 700px) {
+    .form-card, .info-card { width: 94%; }
+    .contact-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+<div>
+    <a href="#" onclick="showPage('home')">Home</a>
+    <span class="nav-sep">|</span>
+    <a href="#" onclick="showPage('contact')">Contact Us</a>
+    <span class="nav-sep">|</span>
+    <a href="#" onclick="showPage('support')">Support</a>
+</div>
+<div>
+    <a href="#" onclick="showPage('privacy')">Privacy</a>
+    <span class="nav-sep">|</span>
+    <a href="#" onclick="showPage('about')">About Us</a>
+</div>
+</div>
+
+<div class="logo-strip">
+<div class="logo-badge">P</div>
+<div>
+    <div class="logo-text-main">PHINMA Cagayan de Oro College</div>
+    <div class="logo-text-sub">STUDENT INFORMATION SYSTEM</div>
+</div>
+</div>
+
+<div class="hero">
+<h1>Classroom Efficiency Logger</h1>
+<p>Submit your activity feedback to help us improve the learning experience.</p>
+</div>
+
+<div id="page-home" class="page active">
+<div class="form-card">
+    <p>
+    <span class="field-label">What is the subject or activity?</span>
+    <span class="field-hint">Enter the subject or activity code (ex. ITE-399)</span>
+    <input class="form-input" type="text" placeholder="e.g. ITE-399">
+    </p>
+    <p>
+    <span class="field-label">What is your section?</span>
+    <span class="field-hint">Ex. COC-FB1-IT1 04</span>
+    <input class="form-input" type="text" placeholder="e.g. COC-FB1-IT1 04">
+    </p>
+    <p>
+    <span class="field-label">Do you have any comments or complaints?</span>
+    <i style="color:#5a7a5a; font-size:12px;">(optional)</i>
+    <textarea class="form-textarea" placeholder="Share your thoughts here..."></textarea>
+    </p>
+    <hr class="divider">
+    <p>
+    <span class="field-label">How would you rate this activity?</span>
+    <span class="field-hint">1 = Poor, 5 = Excellent</span>
+    <div class="rating-row">
+        <label><input type="radio" name="rating" value="1"> 1</label>
+        <label><input type="radio" name="rating" value="2"> 2</label>
+        <label><input type="radio" name="rating" value="3"> 3</label>
+        <label><input type="radio" name="rating" value="4"> 4</label>
+        <label><input type="radio" name="rating" value="5"> 5</label>
+    </div>
+    </p>
+    <p>
+    <button class="submit-btn" onclick="submitForm()">SUBMIT</button>
+    </p>
+    <p class="disclaimer">"This system is monitored — please use it responsibly."</p>
+</div>
+</div>
+
+<div id="page-contact" class="page">
+<div class="info-card">
+    <h2>Contact Us</h2>
+    <p>We'd love to hear from you. Reach out to the appropriate office below for any concerns related to the Classroom Efficiency Logger or the Student Information System.</p>
+    <div class="contact-grid">
+    <div class="contact-box">
+        <div class="label">Registrar's Office</div>
+        <div class="value">registrar@phinmacdo.edu.ph<br>(088) 856-1234 loc. 101</div>
+    </div>
+    <div class="contact-box">
+        <div class="label">IT / Systems Office</div>
+        <div class="value">itsupport@phinmacdo.edu.ph<br>(088) 856-1234 loc. 202</div>
+    </div>
+    <div class="contact-box">
+        <div class="label">Academic Affairs</div>
+        <div class="value">academics@phinmacdo.edu.ph<br>(088) 856-1234 loc. 110</div>
+    </div>
+    <div class="contact-box">
+        <div class="label">Campus Address</div>
+        <div class="value">Corrales Ave., Cagayan de Oro City<br>Misamis Oriental, 9000</div>
+    </div>
+    </div>
+    <h3>Office Hours</h3>
+    <p>Monday – Friday: 8:00 AM – 5:00 PM<br>
+    Saturday: 8:00 AM – 12:00 PM (selected offices only)</p>
+    <button class="back-btn" onclick="showPage('home')">← Back to Form</button>
+</div>
+</div>
+
+<div id="page-support" class="page">
+<div class="info-card">
+    <h2>Support</h2>
+    <p>Having trouble using the Classroom Efficiency Logger? Check the common issues below or contact our IT team directly.</p>
+    <h3>Frequently Asked Questions</h3>
+    <ul>
+    <li><strong>My submission didn't go through.</strong> — Check your internet connection and try again. If the problem persists, contact the IT Office.</li>
+    <li><strong>I entered the wrong subject code.</strong> — Please reach out to your instructor or the Registrar's Office to have the entry corrected.</li>
+    <li><strong>The form keeps resetting.</strong> — Make sure you are using a supported browser (Chrome, Edge, or Firefox). Avoid using private/incognito mode.</li>
+    <li><strong>I can't find my section code.</strong> — Your section code is printed on your Certificate of Registration (COR). Contact your adviser if you need help.</li>
+    <li><strong>Is my feedback anonymous?</strong> — Individual responses are handled confidentially by the Academic Affairs office and are used only for improving class delivery.</li>
+    </ul>
+    <h3>Technical Support</h3>
+    <p>For urgent technical issues, email <a href="mailto:itsupport@phinmacdo.edu.ph">itsupport@phinmacdo.edu.ph</a> or visit the IT Office at Room 102, Main Building.</p>
+    <p>Support tickets are addressed within <strong>1–2 business days</strong>.</p>
+    <button class="back-btn" onclick="showPage('home')">← Back to Form</button>
+</div>
+</div>
+
+<div id="page-privacy" class="page">
+<div class="info-card">
+    <h2>Privacy Policy</h2>
+    <p><em>Effective Date: June 1, 2025 &nbsp;|&nbsp; Last Updated: June 1, 2025</em></p>
+    <h3>1. Information We Collect</h3>
+    <p>When you submit a feedback form, we collect the following information:</p>
+    <ul>
+    <li>Subject or activity code</li>
+    <li>Section identifier</li>
+    <li>Rating (1–5 scale)</li>
+    <li>Optional comments or complaints</li>
+    </ul>
+    <p>We do <strong>not</strong> collect personally identifiable information (PII) such as your full name, student ID, or email address unless you voluntarily provide it in the comments field.</p>
+    <h3>2. How We Use Your Information</h3>
+    <p>Submitted data is used solely to evaluate and improve the quality of classroom activities and teaching delivery at PHINMA Cagayan de Oro College. Data may be aggregated for academic reporting.</p>
+    <h3>3. Data Storage & Security</h3>
+    <p>All submissions are stored on secured college servers and are accessible only to authorized academic and administrative personnel. We apply appropriate technical and organizational measures to protect your data.</p>
+    <h3>4. Data Retention</h3>
+    <p>Feedback records are retained for a maximum of three (3) academic years, after which they are anonymized or securely deleted.</p>
+    <h3>5. Your Rights</h3>
+    <p>In accordance with the Data Privacy Act of 2012 (Republic Act 10173), you have the right to access, correct, or request deletion of any personal data you have submitted. Contact our Data Privacy Officer at <a href="mailto:privacy@phinmacdo.edu.ph">privacy@phinmacdo.edu.ph</a>.</p>
+    <h3>6. Contact</h3>
+    <p>For privacy-related concerns, please email <a href="mailto:privacy@phinmacdo.edu.ph">privacy@phinmacdo.edu.ph</a>.</p>
+    <button class="back-btn" onclick="showPage('home')">← Back to Form</button>
+</div>
+</div>
+
+<div id="page-about" class="page">
+<div class="info-card">
+    <h2>About Us</h2>
+    <h3>PHINMA Cagayan de Oro College</h3>
+    <p>PHINMA Cagayan de Oro College (PHINMA CDO) is a private higher education institution committed to delivering quality, affordable education to students in Northern Mindanao and beyond. As part of the PHINMA Education Network, the college upholds a culture of excellence, integrity, and service.</p>
+    <h3>About the Classroom Efficiency Logger</h3>
+    <p>The <strong>Classroom Efficiency Logger</strong> is a digital feedback tool developed under the Student Information System (SIS) initiative. It allows students to submit structured evaluations of classroom activities, helping faculty and administration continuously improve the quality of learning experiences.</p>
+    <h3>Our Goals</h3>
+    <ul>
+    <li>Empower students to voice their learning experience</li>
+    <li>Provide faculty with timely, actionable feedback</li>
+    <li>Support data-driven academic improvement decisions</li>
+    <li>Promote transparency and accountability in classroom delivery</li>
+    </ul>
+    <h3>Developed By</h3>
+    <p>This system was developed by the PHINMA CDO IT Department in coordination with the Office of Academic Affairs. For inquiries about the system, contact <a href="mailto:itsupport@phinmacdo.edu.ph">itsupport@phinmacdo.edu.ph</a>.</p>
+    <button class="back-btn" onclick="showPage('home')">← Back to Form</button>
+</div>
+</div>
+
+<footer>
+<p>&copy; 2025 PHINMA Cagayan de Oro College. All rights reserved.</p>
+</footer>
+
+<div id="toast">Feedback submitted successfully!</div>
+
+<script>
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function submitForm() {
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
